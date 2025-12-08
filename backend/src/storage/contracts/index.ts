@@ -1,0 +1,1 @@
+export type { IStorageAdapter} from'./i-storage';

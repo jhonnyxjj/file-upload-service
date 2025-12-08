@@ -1,0 +1,1 @@
+export { R2StorageAdapter } from "./r2-storage-adapter";

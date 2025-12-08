@@ -1,0 +1,1 @@
+export { uploadImageRoute } from "./upload.routes";
