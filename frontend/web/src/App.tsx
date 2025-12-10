@@ -1,7 +1,11 @@
+import { FileUpload } from "./components/file-upload";
+
 export function App() {
 
   return (
-    <h1 className="font-inter text-2xl">Texto com Inter</h1>
+     <main className="h-dvh flex flex-col items-center justify-center p-10">
+      <FileUpload />
+    </main>
     
   )
 }
