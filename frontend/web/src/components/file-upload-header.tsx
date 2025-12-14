@@ -2,11 +2,12 @@ import * as Collapsible from "@radix-ui/react-collapsible";
 
 import { Minimize2 } from "lucide-react";
 import { Button } from "./ui/buttons";
+import { FileUploadTitle } from "./file-upload-title";
 
 export function FileUploadHeader() {
   return (
     <div className="w-full p-4 py-2 bg-white/2 border-zinc-800 border-b flex items-center justify-between">
-      <span className="text-sm font-medium">Upload files</span>
+      <FileUploadTitle />
 
       <Collapsible.Trigger asChild>
         <Button size="icon" className="-mr-2">
