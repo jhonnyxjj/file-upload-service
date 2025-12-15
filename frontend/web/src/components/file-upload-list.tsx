@@ -13,7 +13,8 @@ export function FileUploadList() {
         <span className="text-xs text-zinc-400">No uploads have been added yet</span>
       ) : (
         <div className="flex flex-col gap-2">
-          <FileUploadItem />
+          <FileUploadItem />git add src/components/file-upload-list.tsx
+
           <FileUploadItem />
         </div>
 
