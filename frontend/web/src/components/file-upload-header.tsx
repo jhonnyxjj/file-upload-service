@@ -6,7 +6,7 @@ import { FileUploadTitle } from "./file-upload-title";
 
 export function FileUploadHeader() {
   return (
-    <div className="w-full p-4 py-2 bg-white/2 border-zinc-800 border-b flex items-center justify-between">
+    <div className="w-full p-4 sm:p-4 py-3 sm:py-2 bg-white/2 border-zinc-800 border-b flex items-center justify-between gap-2">
       <FileUploadTitle />
 
       <Collapsible.Trigger asChild>
