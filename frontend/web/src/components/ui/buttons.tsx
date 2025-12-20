@@ -6,7 +6,7 @@ const buttonVariants = tv({
 
     variants: {
         size: {
-            default: "px-3 sm:px-3 py-2 text-sm sm:text-sm",
+            default: "m-200 px-3 sm:px-3 py-2 text-sm sm:text-sm",
             icon: "p-2 sm:p-2",
             "icon-sm": "p-1 sm:p-1",
         },
