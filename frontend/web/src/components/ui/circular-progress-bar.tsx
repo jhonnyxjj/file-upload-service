@@ -1,4 +1,4 @@
-interface CircularProgressBarProps {
+type CircularProgressBarProps = {
     progress: number;
     size?: number;
     strokeWidth?: number;
