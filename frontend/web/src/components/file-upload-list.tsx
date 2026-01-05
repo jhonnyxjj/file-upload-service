@@ -3,7 +3,7 @@ import { useUploadStore } from "../store/upload";
 
 export function FileUploadList() {
   const uploads = useUploadStore((state) => state.uploads);
-  const uploadArray = Object.values(uploads);
+  const uploadArray = Array.from(uploads.entries());
   const hasUploads = uploadArray.length > 0;
 
   return (
@@ -14,8 +14,8 @@ export function FileUploadList() {
 
       {hasUploads ? (
         <div className="flex flex-col gap-2">
-          {uploadArray.map((upload) => (
-            <FileUploadItem key={upload.name} upload={upload} />
+          {uploadArray.map(([id, upload]) => (
+            <FileUploadItem key={id} upload={upload} />
           ))}
         </div>
       ) : (
