@@ -2,31 +2,46 @@ import * as Progress from "@radix-ui/react-progress";
 
 import { Download, ImageUp, Link2, RefreshCcw, X } from "lucide-react";
 import { Button } from "./ui/buttons";
+import { motion } from "motion/react";
+import { type Upload } from "../store/upload";
+import { formatBytes } from "../utils/format-bytes";
 
-export function FileUploadItem() {
+interface FileUploadItemProps {
+    upload: Upload;
+}
+
+export function FileUploadItem({ upload }: FileUploadItemProps) {
+
+    const MOCK_PROGRESS = 60;
+
     return (
-        <div className="p-3 sm:p-3 rounded-lg flex flex-col gap-3 sm:gap-3 shadow-shape-content bg-white/2 relative overflow-hidden">
+        <motion.div className="p-3 sm:p-3 rounded-lg flex flex-col gap-3 sm:gap-3 shadow-shape-content bg-white/2 relative overflow-hidden"
+
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+        >
             <div className="flex flex-col gap-1 pr-20 sm:pr-0">
                 <span className="text-sm sm:text-sm font-medium flex items-center gap-2 truncate">
                     <ImageUp className="size-4 text-zinc-300 shrink-0" strokeWidth={1.5} />
-                    <span className="truncate">screenshot.png</span>
+                    <span className="truncate">{upload.name}</span>
                 </span>
 
                 <span className="text-xs text-zinc-400 flex flex-wrap gap-1.5 sm:gap-1.5 items-center">
-                    <span className="line-through">3MB</span>
+                    <span className="line-through">{formatBytes(upload.file.size)}</span>
                     <div className="size-1 rounded-full bg-zinc-700" />
                     <span>
                         300KB
-                        <span className="text-green-400 ml-1">-94%</span>
+                        <span className="text-indigo-400 ml-1">-94%</span>
                     </span>
                     <div className="size-1 rounded-full bg-zinc-700" />
-                    <span>45%</span>
+                    <span>{MOCK_PROGRESS}%</span>
                 </span>
             </div>
 
             <Progress.Root className="bg-zinc-800 rounded-full h-1 overflow-hidden">
                 <Progress.Indicator
-                    className="bg-indigo-500 h-1"
+                    className="bg-green-500 h-1"
                     style={{ width: "43%" }}
                 />
             </Progress.Root>
@@ -52,6 +67,6 @@ export function FileUploadItem() {
                     <span className="sr-only">Cancel upload</span>
                 </Button>
             </div>
-        </div>
+        </motion.div>
     );
 }

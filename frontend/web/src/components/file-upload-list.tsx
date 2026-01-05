@@ -1,23 +1,27 @@
 import { FileUploadItem } from "./file-upload-upload-item";
+import { useUploadStore } from "../store/upload";
 
 export function FileUploadList() {
-  const hasUploads = false;
+  const uploads = useUploadStore((state) => state.uploads);
+  const uploadArray = Array.from(uploads.entries());
+  const hasUploads = uploadArray.length > 0;
 
   return (
     <div className="px-4 sm:px-4 flex flex-col gap-3 flex-1 overflow-y-auto">
       <span className="text-sm sm:text-sm font-medium">
-        Uploaded files <span className="text-zinc-400">(2)</span>
+        Uploaded files <span className="text-zinc-400">({uploadArray.length})</span>
       </span>
 
       {hasUploads ? (
-        <span className="text-xs text-zinc-400">No uploads have been added yet</span>
-      ) : (
         <div className="flex flex-col gap-2">
-          <FileUploadItem />git add src/components/file-upload-list.tsx
-
-          <FileUploadItem />
+          {uploadArray.map(([id, upload]) => (
+            <FileUploadItem key={id} upload={upload} />
+          ))}
         </div>
-
+      ) : (
+        <span className="text-xs text-zinc-400">
+          No uploads yet. Add a file to get started.
+        </span>
       )}
     </div>
   );
