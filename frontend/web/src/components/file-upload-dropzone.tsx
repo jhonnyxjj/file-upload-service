@@ -1,4 +1,4 @@
-import type { useDropzone } from "react-dropzone";
+import { useDropzone } from "react-dropzone";
 import { CircularProgressBar } from "./ui/circular-progress-bar";
 import { motion } from "motion/react";
 import { useUploadStore } from "../store/upload";
