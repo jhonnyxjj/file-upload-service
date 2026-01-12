@@ -1,8 +1,8 @@
 import { UploadCloud } from "lucide-react";
+import { usePendingUploads } from "../store/upload";
 
 export function FileUploadTitle() {
-    const hasPendingUploads = true;
-    const uploadProgress = 68;
+    const {hasPendingUploads, globalPercentage} = usePendingUploads();
 
     return (
         <div className="flex items-center gap-2 text-sm sm:text-sm font-medium truncate">
@@ -11,7 +11,7 @@ export function FileUploadTitle() {
                 <span className="flex items-baseline gap-1">
                     Uploading{" "}
                     <span className="text-xs text-zinc-400 tabular-nums">
-                        {uploadProgress}%
+                        {globalPercentage}%
                     </span>
                 </span>
 

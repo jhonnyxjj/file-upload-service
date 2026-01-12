@@ -1,4 +1,4 @@
-import { FileUploadItem } from "./file-upload-upload-item";
+import { FileUploadItem } from "./file-upload-item";
 import { useUploadStore } from "../store/upload";
 
 export function FileUploadList() {
@@ -14,8 +14,12 @@ export function FileUploadList() {
 
       {hasUploads ? (
         <div className="flex flex-col gap-2">
-          {uploadArray.map(([id, upload]) => (
-            <FileUploadItem key={id} upload={upload} />
+          {uploadArray.map(([uploadId, upload]) => (
+            <FileUploadItem
+              key={uploadId}
+              upload={upload}
+              uploadId={uploadId}
+            />
           ))}
         </div>
       ) : (

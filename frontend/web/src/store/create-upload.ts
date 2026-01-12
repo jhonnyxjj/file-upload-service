@@ -4,13 +4,17 @@ export type Upload = {
     name: string;
     file: File;
     status: UploadStatus;
-    controller: AbortController;
+    abortController: AbortController;
+    originalSizeInBytes: number;
+    uploadSizeInBytes: number;
 }
 export function createUpload(file: File): Upload {
     return {
         name: file.name,
         file,
         status: 'progress',
-        controller: new AbortController()
+        abortController: new AbortController(),
+        originalSizeInBytes: file.size,
+        uploadSizeInBytes: 0,
     };
 }

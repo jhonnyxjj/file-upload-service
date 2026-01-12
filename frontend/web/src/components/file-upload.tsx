@@ -5,10 +5,11 @@ import { FileUploadHeader } from "./file-upload-header";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { FileUploadDropzone } from "./file-upload-dropzone";
 import { FileUploadMinimizedButton } from "./ui/file-upload-minimized-button";
+import { usePendingUploads } from "../store/upload";
 
 
 export function FileUpload() {
-    const hasPendingUploads = true;
+    const {hasPendingUploads} = usePendingUploads();
 
     const [isWidgetOpen, toggleOpen] = useCycle(false, true);
 
