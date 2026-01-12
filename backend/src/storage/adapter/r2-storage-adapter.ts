@@ -15,9 +15,8 @@ export class R2StorageAdapter implements IStorageAdapter {
   constructor(private readonly client: S3Client = createR2Client()) { }
 
   public async uploadStream(input: UploadStreamInput): Promise<{ url: string }> {
+    const key = sanitizeFileName(input.path);
     try {
-      const key = sanitizeFileName(input.path);
-
       const uploadFile = new Upload({
         client: this.client,
         params: {
