@@ -1,0 +1,23 @@
+# Use an official Node.js runtime as a parent image
+FROM node:20-slim
+
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# Copy package.json and bun.lock files to the working directory
+COPY frontend/web/package.json frontend/web/bun.lock* ./
+
+# Install app dependencies
+RUN bun install --frozen-lockfile
+
+# Copy the rest of the application's code
+COPY frontend/web/ .
+
+# Build the app
+RUN bun run build
+
+# Expose the port the app runs on
+EXPOSE 5173
+
+# Define the command to run the app
+CMD ["bun", "run", "preview"]
