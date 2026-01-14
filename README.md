@@ -1,24 +1,24 @@
-# File Upload Service
+# Serviço de Upload de Arquivos
 
-This project is a file upload service with a frontend and a backend.
+Este projeto é um serviço de upload de arquivos com um frontend e um backend.
 
-## Running with Docker
+## Executando com Docker
 
-To run the application with Docker, you need to create a `.env` file in the `backend` directory with the following environment variables:
+Para executar a aplicação com Docker, você precisa criar um arquivo `.env` no diretório `backend` com as seguintes variáveis de ambiente:
 
 ```
 # R2 Storage
-R2_ACCESS_KEY_ID=<YOUR_R2_ACCESS_KEY_ID>
-R2_SECRET_ACCESS_KEY=<YOUR_R2_SECRET_ACCESS_KEY>
-R2_BUCKET_NAME=<YOUR_R2_BUCKET_NAME>
-R2_ACCOUNT_ID=<YOUR_R2_ACCOUNT_ID>
-R2_PUBLIC_URL=<YOUR_R2_PUBLIC_URL>
+R2_ACCESS_KEY_ID=<SUA_CHAVE_DE_ACESSO_R2>
+R2_SECRET_ACCESS_KEY=<SUA_CHAVE_SECRETA_DE_ACESSO_R2>
+R2_BUCKET_NAME=<NOME_DO_SEU_BUCKET_R2>
+R2_ACCOUNT_ID=<ID_DA_SUA_CONTA_R2>
+R2_PUBLIC_URL=<URL_PUBLICA_DO_SEU_R2>
 
 # Server
 SERVER_PORT=3000
 ```
 
-After creating the `.env` file, you can run the application with the following command:
+Depois de criar o arquivo `.env`, você pode executar a aplicação com o seguinte comando:
 
 ```bash
 docker-compose up -d
