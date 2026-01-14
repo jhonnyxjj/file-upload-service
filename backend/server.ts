@@ -12,6 +12,6 @@ server.register(fastifyCors, {
 server.register(fastifyMultipart);
 server.register(uploadImageRoute);
 
-server.listen({ port: 3333, host: '0.0.0.0' }).then(() => {
+server.listen({ port: 3000, host: '0.0.0.0' }).then(() => {
   console.log('HTTP server running!');
 })

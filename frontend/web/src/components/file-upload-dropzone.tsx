@@ -57,7 +57,10 @@ export function FileUploadDropzone() {
                 <span className="text-xxs sm:text-xs text-zinc-400">
                     Resolution:
                 </span>
-                <DropdownMenu onValueChange={setResolution} defaultValue={resolution} />
+                <DropdownMenu onValueChange={(value) => {
+                    console.log('Resolution selected:', value);
+                    setResolution(value);
+                }} defaultValue={resolution} />
             </div>
 
 
