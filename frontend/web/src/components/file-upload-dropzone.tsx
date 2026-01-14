@@ -2,9 +2,13 @@ import { useDropzone } from "react-dropzone";
 import { CircularProgressBar } from "./ui/circular-progress-bar";
 import { motion } from "motion/react";
 import { usePendingUploads, useUploadStore } from "../store/upload";
+import { DropdownMenu } from "./ui/dropdown-menu";
 
 export function FileUploadDropzone() {
-    const { addUploads } = useUploadStore(store => ({ addUploads: store.addUploads }));
+    const addUploads = useUploadStore(store => store.addUploads);
+    const resolution = useUploadStore(store => store.resolution);
+    const setResolution = useUploadStore(store => store.setResolution);
+
     const uploadCount = useUploadStore(store => store.uploads.size);
     const { hasPendingUploads, globalPercentage } = usePendingUploads();
 
@@ -23,7 +27,7 @@ export function FileUploadDropzone() {
         <motion.div className="px-4 sm:px-4 flex flex-col gap-3"
 
             initial={{ opacity: 0 }}
-            animate={{ opacity: 3 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
         >
             <div
@@ -49,6 +53,13 @@ export function FileUploadDropzone() {
                     </>
                 )}
             </div>
+            <div className="flex items-center gap-2">
+                <span className="text-xxs sm:text-xs text-zinc-400">
+                    Resolution:
+                </span>
+                <DropdownMenu onValueChange={setResolution} defaultValue={resolution} />
+            </div>
+
 
             <span className="text-xxs sm:text-xs text-zinc-400">
                 Only PNG and JPG files are supported.

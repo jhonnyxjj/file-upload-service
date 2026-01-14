@@ -5,17 +5,18 @@ import { createUpload } from './create-upload';
 import { type Upload } from './create-upload';
 import { processUpload } from './process-upload';
 import { useShallow } from 'zustand/shallow';
+import {type Resolution } from '../utils/compress-image';
 
 interface UploadStore {
   uploads: Map<string, Upload>;
+  resolution: Resolution;
+  setResolution: (resolution: Resolution) => void;
   addUploads: (files: File[]) => void;
   cancelUpload: (uploadId: string) => void;
   updateUpload: (uploadId: string, update: Partial<Upload>) => void;
 };
 
 enableMapSet();
-
-
 
 export const useUploadStore = create<UploadStore, [["zustand/immer", never]]>(
   immer((set, get) => {
@@ -31,12 +32,19 @@ export const useUploadStore = create<UploadStore, [["zustand/immer", never]]>(
 
     return {
       uploads: new Map(),
+      resolution: '1080p',
+      setResolution: (resolution: Resolution) => {
+        set(state => {
+          state.resolution = resolution;
+        });
+      },
       addUploads(files: File[]) {
+        const { resolution } = get();
         files.forEach(file => {
           const uploadId = crypto.randomUUID();
           const upload = createUpload(file);
           set(state => void state.uploads.set(uploadId, upload));
-          processUpload(uploadId, upload);
+          processUpload(uploadId, upload, resolution);
         });
       },
       cancelUpload(uploadId: string) {
@@ -62,9 +70,8 @@ export const usePendingUploads = () => {
       // Sempre calcula, retorna sempre o mesmo formato
       const { totalBytes, uploadedBytes } = pendingUploads.reduce(
         (acc, upload) => {
-          acc.totalBytes += upload.originalSizeInBytes;
+          acc.totalBytes += upload.file.size;
           acc.uploadedBytes += upload.uploadSizeInBytes;
-          console.log(acc);
           return acc;
         },
         { totalBytes: 0, uploadedBytes: 0 }
