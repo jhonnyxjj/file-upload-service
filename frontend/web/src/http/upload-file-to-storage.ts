@@ -7,7 +7,7 @@ export interface UploadParams {
 }
 
 type UploadResponse = {
-  url: string;
+  url: string ;
 };
 
 export async function uploadFileToStorage({ file, signal, onProgress }: UploadParams): Promise<UploadResponse> {

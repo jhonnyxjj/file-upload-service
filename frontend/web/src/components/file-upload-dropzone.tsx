@@ -14,7 +14,7 @@ export function FileUploadDropzone() {
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         multiple: true,
-        accept: {                   //TODO remover verificacao de tipo arquivo para backend, e colocar na regras de negocios
+        accept: {                   // TODO: Move file type verification to the backend and place it within the business logic.
             "image/jpg": [],
             "image/jpeg": [],
             "image/png": [],

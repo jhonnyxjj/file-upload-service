@@ -27,7 +27,9 @@ export async function processUpload(uploadId: string, upload: Upload, resolution
             signal: upload.abortController.signal
         });
 
-        useUploadStore.getState().updateUpload(uploadId, { status: 'success', remoteUrl: url });
+        const urlWithCacheBust = `${url}?t=${new Date().getTime()}`;
+
+        useUploadStore.getState().updateUpload(uploadId, { status: 'success', remoteUrl: urlWithCacheBust });
         return url;
     } catch (error) {
         useUploadStore.getState().updateUpload(uploadId, { status: upload.abortController.signal.aborted ? 'canceled' : 'error' });

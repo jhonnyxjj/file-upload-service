@@ -1,19 +1,19 @@
 import * as Progress from "@radix-ui/react-progress";
-import { Download, ImageUp, Link2, RefreshCcw, X, Check } from "lucide-react"; // Importei o Check
+import { Download, ImageUp, Link2, RefreshCcw, X, Check } from "lucide-react";
 import { Button } from "./ui/buttons";
-import { motion, AnimatePresence } from "motion/react"; // Adicionei AnimatePresence para o efeito
+import { motion, AnimatePresence } from "motion/react";
 import { useUploadStore } from "../store/upload";
 import { type Upload } from "../store/create-upload";
 import { formatBytes } from "../utils/format-bytes";
-import { useState } from "react"; // Importar useState
+import { useState } from "react";
 
 interface FileUploadItemProps {
     upload: Upload;
     uploadId: string;
 }
 
-export function FileUploadItem({ upload, uploadId }: FileUploadItemProps) {
-    const [copied, setCopied] = useState(false); // Estado para o feedback
+export function FileUploadItem({ upload, uploadId,  }: FileUploadItemProps) {
+    const [copied, setCopied] = useState(false);
     const cancelUpload = useUploadStore((store) => store.cancelUpload);
     const retryUpload = useUploadStore((store) => store.retryUpload);
 
@@ -21,19 +21,20 @@ export function FileUploadItem({ upload, uploadId }: FileUploadItemProps) {
         ? Math.round((upload.uploadSizeInBytes * 100) / upload.file.size)
         : 0;
 
+    // Calcula a economia de espaço em porcentagem após a compressão da imagem.
     const percentageSaved = Math.round(
         (1 - upload.file.size / upload.originalSizeInBytes) * 100
     );
 
-    // Função para copiar e mostrar o feedback
     async function handleCopy() {
         if (upload.remoteUrl) {
             await navigator.clipboard.writeText(upload.remoteUrl);
             setCopied(true);
-            setTimeout(() => setCopied(false), 2000); // Esconde após 2s
+            setTimeout(() => setCopied(false), 2000);
         }
     }
 
+    // Cria um link temporário para forçar o download do arquivo no navegador.
     async function handleDownload() {
         if (upload.remoteUrl) {
             const response = await fetch(upload.remoteUrl);
@@ -56,7 +57,7 @@ export function FileUploadItem({ upload, uploadId }: FileUploadItemProps) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
         >
-            {/* ... restante do código (nome e progresso) igual ... */}
+
             <div className="flex flex-col gap-1 pr-20 sm:pr-0">
                 <span className="text-sm sm:text-sm font-medium flex items-center gap-2 truncate">
                     <ImageUp className="size-4 text-zinc-300 shrink-0" strokeWidth={1.5} />
@@ -64,21 +65,27 @@ export function FileUploadItem({ upload, uploadId }: FileUploadItemProps) {
                 </span>
 
                 <span className="text-xs text-zinc-400 flex flex-wrap gap-1.5 sm:gap-1.5 items-center">
-                    <span>{formatBytes(upload.originalSizeInBytes)}</span>
-                    <div className="size-1 rounded-full bg-zinc-700" />
-                    <span>
-                        {formatBytes(upload.file.size ?? 0)}
-                        <span className="text-green-400 ml-1">{percentageSaved}% salvo</span>
-                    </span>
-                    <div className="size-1 rounded-full bg-zinc-700" />
-
-                    {upload.status === "success" && <span>100%</span>}
-                    {upload.status === "progress" && <span>{progress}%</span>}
-                    {upload.status === "error" && (
-                        <span className="text-red-400">Erro</span>
-                    )}
-                    {upload.status === "canceled" && (
-                        <span className="text-yellow-400">Cancelado</span>
+                    {upload.status === "success" || upload.status === "progress" ? (
+                        <>
+                            <span>{formatBytes(upload.originalSizeInBytes)}</span>
+                            <div className="size-1 rounded-full bg-zinc-700" />
+                            <span>
+                                {formatBytes(upload.file.size ?? 0)}
+                                <span className="text-green-400 ml-1">{percentageSaved}% saved</span>
+                            </span>
+                            <div className="size-1 rounded-full bg-zinc-700" />
+                            {upload.status === "success" && <span>100%</span>}
+                            {upload.status === "progress" && <span>{progress}%</span>}
+                        </>
+                    ) : (
+                        <>
+                            {upload.status === "error" && (
+                                <span className="text-red-400">Error</span>
+                            )}
+                            {upload.status === "canceled" && (
+                                <span className="text-yellow-400">Canceled</span>
+                            )}
+                        </>
                     )}
                 </span>
             </div>
@@ -98,7 +105,6 @@ export function FileUploadItem({ upload, uploadId }: FileUploadItemProps) {
                         <span className="sr-only">download image</span>
                 </Button>
 
-                {/* BOTÃO DE COPIAR */}
                 <Button 
                     size="icon-sm" 
                     disabled={!upload.remoteUrl} 
@@ -111,7 +117,6 @@ export function FileUploadItem({ upload, uploadId }: FileUploadItemProps) {
                         <Link2 className="size-4" strokeWidth={1.5} />
                     )}
                     
-                    {/* Tooltip opcional usando Framer Motion */}
                     <AnimatePresence>
                         {copied && (
                             <motion.span 
@@ -120,7 +125,7 @@ export function FileUploadItem({ upload, uploadId }: FileUploadItemProps) {
                                 exit={{ opacity: 0 }}
                                 className="absolute -top-8 right-0 bg-zinc-800 text-white text-xxs px-2 py-1 rounded shadow-lg border border-zinc-700 whitespace-nowrap"
                             >
-                                Copiado!
+                                Copied!
                             </motion.span>
                         )}
                     </AnimatePresence>
