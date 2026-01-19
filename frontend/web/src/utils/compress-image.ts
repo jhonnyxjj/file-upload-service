@@ -16,6 +16,9 @@ export function compressImage(
   file: File,
   resolution: Resolution,
 ): Promise<File> {
+  if (!file.type.startsWith('image/')) {
+    return Promise.resolve(file)
+  }
   return new Promise((resolve, reject) => {
     const imageUrl = URL.createObjectURL(file);
     const image = new Image();
@@ -53,7 +56,7 @@ export function compressImage(
           resolve(compressedFile);
         },
         'image/webp',
-        0.8,
+        0.9,
       )
     }
 

@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-interface UploadParams {
+export interface UploadParams {
   file: File;
   signal?: AbortSignal;
-  onProgress: (sizeInBytes: number) => void;
+  onProgress?: (sizeInBytes: number) => void;
 }
 
 type UploadResponse = {
@@ -16,7 +16,7 @@ export async function uploadFileToStorage({ file, signal, onProgress }: UploadPa
 
   try {
     const res = await axios.post<{ url: string }>(
-      "http://localhost:3333/uploads",
+      "http://localhost:3000/uploads",
       formData,
       {
         headers: {
@@ -24,9 +24,10 @@ export async function uploadFileToStorage({ file, signal, onProgress }: UploadPa
         },
         signal: signal,
           onUploadProgress(progressEvent) {
-          onProgress(progressEvent.loaded);
+          onProgress?.(progressEvent.loaded);
         },
       }
+      
     );
 
     if (!res.data.url) {

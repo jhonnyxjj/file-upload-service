@@ -1,11 +1,11 @@
 import * as Progress from "@radix-ui/react-progress";
-
-import { Download, ImageUp, Link2, RefreshCcw, X } from "lucide-react";
+import { Download, ImageUp, Link2, RefreshCcw, X, Check } from "lucide-react"; // Importei o Check
 import { Button } from "./ui/buttons";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react"; // Adicionei AnimatePresence para o efeito
 import { useUploadStore } from "../store/upload";
 import { type Upload } from "../store/create-upload";
 import { formatBytes } from "../utils/format-bytes";
+import { useState } from "react"; // Importar useState
 
 interface FileUploadItemProps {
     upload: Upload;
@@ -13,24 +13,50 @@ interface FileUploadItemProps {
 }
 
 export function FileUploadItem({ upload, uploadId }: FileUploadItemProps) {
+    const [copied, setCopied] = useState(false); // Estado para o feedback
     const cancelUpload = useUploadStore((store) => store.cancelUpload);
+    const retryUpload = useUploadStore((store) => store.retryUpload);
 
-    const progress = Math.min(
-        Math.round((upload.uploadSizeInBytes * 100) / upload.file.size),
-        100
-    );
+    const progress = upload.file.size
+        ? Math.round((upload.uploadSizeInBytes * 100) / upload.file.size)
+        : 0;
 
     const percentageSaved = Math.round(
         (1 - upload.file.size / upload.originalSizeInBytes) * 100
     );
 
-    return (
-        <motion.div className="p-3 sm:p-3 rounded-lg flex flex-col gap-3 sm:gap-3 shadow-shape-content bg-white/2 relative overflow-hidden"
+    // Função para copiar e mostrar o feedback
+    async function handleCopy() {
+        if (upload.remoteUrl) {
+            await navigator.clipboard.writeText(upload.remoteUrl);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000); // Esconde após 2s
+        }
+    }
 
+    async function handleDownload() {
+        if (upload.remoteUrl) {
+            const response = await fetch(upload.remoteUrl);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = upload.name;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+        }
+    }
+
+    return (
+        <motion.div
+            className="p-3 sm:p-3 rounded-lg flex flex-col gap-3 sm:gap-3 shadow-shape-content bg-white/2 relative"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
         >
+            {/* ... restante do código (nome e progresso) igual ... */}
             <div className="flex flex-col gap-1 pr-20 sm:pr-0">
                 <span className="text-sm sm:text-sm font-medium flex items-center gap-2 truncate">
                     <ImageUp className="size-4 text-zinc-300 shrink-0" strokeWidth={1.5} />
@@ -41,18 +67,18 @@ export function FileUploadItem({ upload, uploadId }: FileUploadItemProps) {
                     <span>{formatBytes(upload.originalSizeInBytes)}</span>
                     <div className="size-1 rounded-full bg-zinc-700" />
                     <span>
-                        {formatBytes(upload.file.size)}
-                        <span className="text-green-400 ml-1">{percentageSaved}% saved</span>
+                        {formatBytes(upload.file.size ?? 0)}
+                        <span className="text-green-400 ml-1">{percentageSaved}% salvo</span>
                     </span>
                     <div className="size-1 rounded-full bg-zinc-700" />
 
                     {upload.status === "success" && <span>100%</span>}
                     {upload.status === "progress" && <span>{progress}%</span>}
                     {upload.status === "error" && (
-                        <span className="text-red-400">Error</span>
+                        <span className="text-red-400">Erro</span>
                     )}
                     {upload.status === "canceled" && (
-                        <span className="text-yellow-400">Canceled</span>
+                        <span className="text-yellow-400">Cancelado</span>
                     )}
                 </span>
             </div>
@@ -63,27 +89,52 @@ export function FileUploadItem({ upload, uploadId }: FileUploadItemProps) {
                 <Progress.Indicator
                     className="bg-gray-600 h-1 group-data-[status=success]:bg-green-400 group-data-[status=error]:bg-red-400 group-data-[status=canceled]:bg-yellow-400"
                     style={{ width: upload.status === "progress" ? `${progress}%` : "100%" }}
-
                 />
             </Progress.Root>
 
             <div className="absolute top-2.5 right-2.5 flex items-center gap-1">
-                <Button size="icon-sm" disabled={upload.status !== "success"}>
-                    <Download className="size-4" strokeWidth={1.5} />
-                    <span className="sr-only">Download compressed image</span>
+                <Button onClick={handleDownload} size="icon-sm" disabled={upload.status !== "success"}>
+                        <Download className="size-4" strokeWidth={1.5} />
+                        <span className="sr-only">download image</span>
                 </Button>
 
-                <Button size="icon-sm" disabled={upload.status !== "success"}>
-                    <Link2 className="size-4" strokeWidth={1.5} />
-                    <span className="sr-only">Copy remote URL</span>
+                {/* BOTÃO DE COPIAR */}
+                <Button 
+                    size="icon-sm" 
+                    disabled={!upload.remoteUrl} 
+                    onClick={handleCopy}
+                    className="relative"
+                >
+                    {copied ? (
+                        <Check className="size-4 text-green-400" strokeWidth={2} />
+                    ) : (
+                        <Link2 className="size-4" strokeWidth={1.5} />
+                    )}
+                    
+                    {/* Tooltip opcional usando Framer Motion */}
+                    <AnimatePresence>
+                        {copied && (
+                            <motion.span 
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0 }}
+                                className="absolute -top-8 right-0 bg-zinc-800 text-white text-xxs px-2 py-1 rounded shadow-lg border border-zinc-700 whitespace-nowrap"
+                            >
+                                Copiado!
+                            </motion.span>
+                        )}
+                    </AnimatePresence>
+                    
+                    <span className="sr-only">Copy URL</span>
                 </Button>
 
                 <Button
                     disabled={!["canceled", "error"].includes(upload.status)}
                     size="icon-sm"
+                    onClick={() => retryUpload(uploadId)}
                 >
                     <RefreshCcw className="size-4" strokeWidth={1.5} />
-                    <span className="sr-only">Retry upload</span>
+                    <span className="sr-only">Try again</span>
                 </Button>
 
                 <Button

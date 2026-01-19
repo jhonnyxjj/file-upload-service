@@ -5,7 +5,7 @@ import { createUpload } from './create-upload';
 import { type Upload } from './create-upload';
 import { processUpload } from './process-upload';
 import { useShallow } from 'zustand/shallow';
-import {type Resolution } from '../utils/compress-image';
+import { type Resolution } from '../utils/compress-image';
 
 interface UploadStore {
   uploads: Map<string, Upload>;
@@ -14,6 +14,7 @@ interface UploadStore {
   addUploads: (files: File[]) => void;
   cancelUpload: (uploadId: string) => void;
   updateUpload: (uploadId: string, update: Partial<Upload>) => void;
+  retryUpload: (uploadId: string) => void;
 };
 
 enableMapSet();
@@ -51,7 +52,21 @@ export const useUploadStore = create<UploadStore, [["zustand/immer", never]]>(
         const upload = get().uploads.get(uploadId);
         if (upload) {
           upload.abortController.abort();
-          updateUpload(uploadId, { status: 'canceled' });
+          updateUpload(uploadId, { status: 'canceled', remoteUrl: undefined });
+        }
+      },
+      retryUpload(uploadId: string) {
+        const { uploads, resolution } = get();
+        const upload = uploads.get(uploadId);
+
+        if (upload) {
+          const newAbortController = new AbortController();
+          updateUpload(uploadId, { 
+            status: 'progress', 
+            uploadSizeInBytes: 0,
+            abortController: newAbortController,
+          });
+          processUpload(uploadId, { ...upload, abortController: newAbortController }, resolution);
         }
       },
       updateUpload,
@@ -70,8 +85,8 @@ export const usePendingUploads = () => {
       // Sempre calcula, retorna sempre o mesmo formato
       const { totalBytes, uploadedBytes } = pendingUploads.reduce(
         (acc, upload) => {
-          acc.totalBytes += upload.file.size;
           acc.uploadedBytes += upload.uploadSizeInBytes;
+          acc.totalBytes += upload.file.size;
           return acc;
         },
         { totalBytes: 0, uploadedBytes: 0 }
@@ -83,6 +98,7 @@ export const usePendingUploads = () => {
       return {
         hasPendingUploads,
         globalPercentage,
+
       };
     })
   );

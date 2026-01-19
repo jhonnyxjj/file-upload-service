@@ -16,9 +16,10 @@ export async function processUpload(uploadId: string, upload: Upload, resolution
         useUploadStore.getState().updateUpload(uploadId, {
             name: compressedFile.name,
             file: compressedFile,
+            compressedSizeInBytes: compressedFile.size,
         });
 
-        const result = await uploadFileToStorage({
+        const { url } = await uploadFileToStorage({
             file: compressedFile,
             onProgress(sizeInBytes: number) {
                 useUploadStore.getState().updateUpload(uploadId, { uploadSizeInBytes: sizeInBytes });
@@ -26,8 +27,8 @@ export async function processUpload(uploadId: string, upload: Upload, resolution
             signal: upload.abortController.signal
         });
 
-        useUploadStore.getState().updateUpload(uploadId, { status: 'success' });
-        return result;
+        useUploadStore.getState().updateUpload(uploadId, { status: 'success', remoteUrl: url });
+        return url;
     } catch (error) {
         useUploadStore.getState().updateUpload(uploadId, { status: upload.abortController.signal.aborted ? 'canceled' : 'error' });
         throw error;

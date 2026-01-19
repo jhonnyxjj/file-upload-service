@@ -6,7 +6,9 @@ export type Upload = {
     status: UploadStatus;
     abortController: AbortController;
     originalSizeInBytes: number;
+    compressedSizeInBytes?: number;
     uploadSizeInBytes: number;
+    remoteUrl?: string;
 }
 export function createUpload(file: File): Upload {
     return {
@@ -16,5 +18,8 @@ export function createUpload(file: File): Upload {
         abortController: new AbortController(),
         originalSizeInBytes: file.size,
         uploadSizeInBytes: 0,
+        remoteUrl: undefined,
+        compressedSizeInBytes: undefined, 
+        
     };
 }
