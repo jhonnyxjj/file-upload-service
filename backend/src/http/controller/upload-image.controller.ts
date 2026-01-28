@@ -17,7 +17,13 @@ export class UploadImageController {
     constructor(private readonly uploadImageUseCase: UploadImageUseCase) { }
 
     async uploadImage(request: FastifyRequest, reply: FastifyReply) {
+        if (!request.isMultipart()) {
+            return reply.status(400).send({
+                message: 'Request must be multipart/form-data',
+            });
+        }
         try {
+
             const uploadedFile = await request.file({
                 limits: { fileSize: MAXIMUM_FILE_SIZE_IN_BYTES },
             });
@@ -44,7 +50,10 @@ export class UploadImageController {
 
             return reply.status(201).send({ url });
         } catch (error) {
-            return reply.status(500).send({ error: "Erro ao fazer upload da imagem" });
+            return reply.status(500).send({
+                message: 'Erro ao processar upload de imagem',
+                details: error instanceof ZodError ? zodErrorToString(error) : (error as Error).message,
+            });
         }
     }
 }
