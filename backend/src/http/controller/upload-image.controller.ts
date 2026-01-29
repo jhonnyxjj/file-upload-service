@@ -1,8 +1,6 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { UploadImageUseCase } from "../../usecase";
-import { makeUploadImageUseCase } from "./di-container";
-import { ZodError } from "zod";
-import { zodErrorToString } from "../../utils";
+import { makeUploadImageUseCase } from "../../factories/upload-image.factory";
 
 const MAXIMUM_FILE_SIZE_IN_BYTES = 1024 * 1024 * 8; // 8MB
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -14,7 +12,7 @@ const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"
 
 export class UploadImageController {
 
-    constructor(private readonly uploadImageUseCase: UploadImageUseCase) { }
+    constructor(private readonly usecase: UploadImageUseCase = makeUploadImageUseCase()) { }
 
     async uploadImage(request: FastifyRequest, reply: FastifyReply) {
         if (!request.isMultipart()) {
@@ -42,7 +40,7 @@ export class UploadImageController {
                 return reply.status(400).send({ error: "Tipo de arquivo inválido" });
             }
 
-            const { url } = await this.uploadImageUseCase.execute({
+            const { url } = await this.usecase.execute({
                 name: filename,
                 contentType: mimetype,
                 contentStream,
