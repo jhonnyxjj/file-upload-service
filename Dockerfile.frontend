@@ -1,34 +1,20 @@
-# Estágio 1: Construção (Build)
-FROM node:20-slim AS build
+# ===== BUILD =====
+FROM oven/bun:1.2.22 AS build
 
-# Define o diretório de trabalho
 WORKDIR /usr/src/app
 
-# Copia os metadados do projeto
 COPY frontend/web/package.json frontend/web/bun.lock* ./
-
-# Instala dependências
 RUN bun install --frozen-lockfile
 
-# Copia todo o código-fonte do frontend
 COPY frontend/web/ .
-
-# Gera os arquivos estáticos da aplicação
 RUN bun run build
 
-# ---
-# Estágio 2: Produção (Production)
+
+# ===== RUNTIME =====
 FROM nginx:stable-alpine
 
-# Copia os arquivos estáticos gerados no estágio de build para o diretório padrão do Nginx
 COPY --from=build /usr/src/app/dist /usr/share/nginx/html
-
-# Copia o arquivo de configuração do Nginx
-# Este arquivo garante que o roteamento do React (Single Page Application) funcione corretamente
 COPY frontend/web/nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expõe a porta 80, que é a porta padrão do Nginx
 EXPOSE 80
-
-# Comando para iniciar o servidor Nginx
 CMD ["nginx", "-g", "daemon off;"]

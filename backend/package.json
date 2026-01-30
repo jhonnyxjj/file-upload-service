@@ -1,10 +1,11 @@
 {
   "name": "upload-server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "type": "module", 
   "scripts": {
-    "dev": "bun --hot --env-file .env src/server.ts"
+    "dev": "bun run --hot src/server.ts",
+    "build": "bun build src/server.ts --outdir dist --target node --format esm",
+    "start": "bun dist/server.js"
+
   },
   "keywords": [],
   "author": "",

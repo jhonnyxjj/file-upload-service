@@ -1,43 +1,22 @@
-# Estágio 1: Construção (Build)
-FROM node:20-slim AS build
+# ===== STAGE 1: BUILD =====
+FROM oven/bun:1.2.22 AS build
 
-# Define o diretório de trabalho
 WORKDIR /usr/src/app
 
-# Copia os metadados do projeto
 COPY backend/package.json backend/bun.lock* ./
-
-# Instala todas as dependências (incluindo devDependencies para build)
 RUN bun install --frozen-lockfile
 
-# Copia todo o código-fonte do backend
 COPY backend/ .
+RUN bun run build
 
-# (Opcional, mas recomendado) Adicionar um script de build no package.json
-# e executá-lo aqui. Por enquanto, vamos assumir que o tsconfig.json
-# define um outDir como 'dist'
-# RUN bun run build
 
-# ---
-# Estágio 2: Produção (Production)
-FROM node:20-slim
+# ===== STAGE 2: RUNTIME =====
+FROM oven/bun:1.2.22 AS runtime
 
-# Define o diretório de trabalho
 WORKDIR /usr/src/app
 
-# Copia os metadados do projeto do estágio de build
-COPY --from=build /usr/src/app/package.json /usr/src/app/bun.lock* ./
+# Copia SOMENTE o resultado do build
+COPY --from=build /usr/src/app ./
 
-# Instala somente as dependências de produção
-RUN bun install --frozen-lockfile --production
-
-# Copia o código-fonte compilado do estágio de build
-# Assumindo que o TypeScript compila para uma pasta 'dist'
-COPY --from=build /usr/src/app/ .
-
-# Expõe a porta
 EXPOSE 3000
-
-# Comando para iniciar a aplicação em produção
-# O ideal é ter um script no package.json como "start:prod": "node dist/server.js"
-CMD ["bun", "run", "start"]
+CMD ["bun", "dist/server.js"]
