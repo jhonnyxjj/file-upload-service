@@ -15,9 +15,12 @@ Este projeto é um serviço completo de upload de arquivos, com um frontend mode
 
 O frontend oferece uma interface limpa e intuitiva para gerenciar os uploads de arquivos. Os usuários podem arrastar e soltar arquivos, ver uma lista de todos os uploads com seu progresso e interagir com cada um individualmente.
 
-**[Espaço para a Screenshot da UI]**
+**🎥 Upload Flow Demo**
 
-*TODO: Adicione uma screenshot da interface do usuário da aplicação aqui.*
+
+
+https://github.com/user-attachments/assets/a7654cc5-c117-4902-aa94-43f55a3e849a
+
 
 ## 🚀 Começando
 
