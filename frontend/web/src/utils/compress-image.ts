@@ -1,41 +1,42 @@
+export type CompressionLevel = 'low' | 'medium' | 'high'
 
-export type Resolution = '4k' | '1080p' | '720p'
-
-type ResolutionValue = {
-  width: number
-  height: number
-}
-
-const resolutions: Record<Resolution, ResolutionValue> = {
-  '4k': { width: 3840, height: 2160 },
-  '1080p': { width: 1920, height: 1080 },
-  '720p': { width: 1280, height: 720 },
+const compressionSettings: Record<CompressionLevel, {
+  quality: number
+  maxDimension: number
+}> = {
+  low: { quality: 0.95, maxDimension: 4096 },
+  medium: { quality: 0.85, maxDimension: 2048 },
+  high: { quality: 0.75, maxDimension: 1920 },
 }
 
 export function compressImage(
   file: File,
-  resolution: Resolution,
+  level: CompressionLevel = 'medium',
 ): Promise<File> {
-  if (!file.type.startsWith('image/')) {
-    return Promise.resolve(file)
-  }
   return new Promise((resolve, reject) => {
-    const imageUrl = URL.createObjectURL(file);
-    const image = new Image();
-    image.src = imageUrl;
+    const imageUrl = URL.createObjectURL(file)
+    const image = new Image()
+    image.src = imageUrl
 
     image.onload = () => {
-      URL.revokeObjectURL(imageUrl);
+      URL.revokeObjectURL(imageUrl)
 
-      const { width, height } = resolutions[resolution]
-      console.log(`Applying resolution: ${resolution} (width: ${width}, height: ${height})`);
+      const { quality, maxDimension } = compressionSettings[level]
+      
+      // Mantém aspect ratio
+      let { width, height } = image
+      
+      if (width > maxDimension || height > maxDimension) {
+        const ratio = Math.min(maxDimension / width, maxDimension / height)
+        width = Math.round(width * ratio)
+        height = Math.round(height * ratio)
+      }
 
-      const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
 
-      const context = canvas.getContext('2d');
-
+      const context = canvas.getContext('2d')
       if (!context) {
         return reject(new Error('Could not get canvas context'))
       }
@@ -53,16 +54,13 @@ export function compressImage(
             type: 'image/webp',
           })
 
-          resolve(compressedFile);
+          resolve(compressedFile)
         },
         'image/webp',
-        0.9,
+        quality,
       )
     }
 
-    image.onerror = (error) => {
-      URL.revokeObjectURL(imageUrl);
-      reject(error);
-    }
+    image.onerror = reject
   })
 }

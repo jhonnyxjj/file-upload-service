@@ -1,5 +1,6 @@
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as Progress from "@radix-ui/react-progress";
-import { Download, ImageUp, Link2, RefreshCcw, X, Check } from "lucide-react";
+import { Download, ImageUp, Link2, RefreshCcw, X, Check, MoreVertical } from "lucide-react";
 import { Button } from "./ui/buttons";
 import { motion, AnimatePresence } from "motion/react";
 import { useUploadStore } from "../store/upload";
@@ -12,7 +13,7 @@ interface FileUploadItemProps {
     uploadId: string;
 }
 
-export function FileUploadItem({ upload, uploadId,  }: FileUploadItemProps) {
+export function FileUploadItem({ upload, uploadId, }: FileUploadItemProps) {
     const [copied, setCopied] = useState(false);
     const cancelUpload = useUploadStore((store) => store.cancelUpload);
     const retryUpload = useUploadStore((store) => store.retryUpload);
@@ -58,10 +59,10 @@ export function FileUploadItem({ upload, uploadId,  }: FileUploadItemProps) {
             transition={{ duration: 0.6 }}
         >
 
-            <div className="flex flex-col gap-1 pr-20 sm:pr-0">
-                <span className="text-sm sm:text-sm font-medium flex items-center gap-2 truncate">
+            <div className="flex flex-col gap-1 pr-20 sm:pr-0 min-w-0">
+                <span className="text-sm sm:text-sm font-medium flex items-start gap-2">
                     <ImageUp className="size-4 text-zinc-300 shrink-0" strokeWidth={1.5} />
-                    <span className="truncate">{upload.name}</span>
+                    <span className="grow overflow-wrap wrap-break-word min-w-0">{upload.name}</span>
                 </span>
 
                 <span className="text-xs text-zinc-400 flex flex-wrap gap-1.5 sm:gap-1.5 items-center">
@@ -99,57 +100,109 @@ export function FileUploadItem({ upload, uploadId,  }: FileUploadItemProps) {
                 />
             </Progress.Root>
 
-            <div className="absolute top-2.5 right-2.5 flex items-center gap-1">
-                <Button onClick={handleDownload} size="icon-sm" disabled={upload.status !== "success"}>
+            <div className="absolute top-2.5 right-2.5 flex items-center gap-1 z-10 shrink-0">
+                <div className="hidden sm:flex items-center gap-1">
+                    <Button onClick={handleDownload} size="icon-sm" disabled={upload.status !== "success"}>
                         <Download className="size-4" strokeWidth={1.5} />
                         <span className="sr-only">download image</span>
-                </Button>
+                    </Button>
 
-                <Button 
-                    size="icon-sm" 
-                    disabled={!upload.remoteUrl} 
-                    onClick={handleCopy}
-                    className="relative"
-                >
-                    {copied ? (
-                        <Check className="size-4 text-green-400" strokeWidth={2} />
-                    ) : (
-                        <Link2 className="size-4" strokeWidth={1.5} />
-                    )}
-                    
-                    <AnimatePresence>
-                        {copied && (
-                            <motion.span 
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0 }}
-                                className="absolute -top-8 right-0 bg-zinc-800 text-white text-xxs px-2 py-1 rounded shadow-lg border border-zinc-700 whitespace-nowrap"
-                            >
-                                Copied!
-                            </motion.span>
+                    <Button
+                        size="icon-sm"
+                        disabled={!upload.remoteUrl}
+                        onClick={handleCopy}
+                        className="relative"
+                    >
+                        {copied ? (
+                            <Check className="size-4 text-green-400" strokeWidth={2} />
+                        ) : (
+                            <Link2 className="size-4" strokeWidth={1.5} />
                         )}
-                    </AnimatePresence>
-                    
-                    <span className="sr-only">Copy URL</span>
-                </Button>
 
-                <Button
-                    disabled={!["canceled", "error"].includes(upload.status)}
-                    size="icon-sm"
-                    onClick={() => retryUpload(uploadId)}
-                >
-                    <RefreshCcw className="size-4" strokeWidth={1.5} />
-                    <span className="sr-only">Try again</span>
-                </Button>
+                        <AnimatePresence>
+                            {copied && (
+                                <motion.span
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    className="absolute -top-8 right-0 bg-zinc-800 text-white text-xxs px-2 py-1 rounded shadow-lg border border-zinc-700 whitespace-nowrap"
+                                >
+                                    Copied!
+                                </motion.span>
+                            )}
+                        </AnimatePresence>
 
-                <Button
-                    disabled={upload.status !== "progress"}
-                    size="icon-sm"
-                    onClick={() => cancelUpload(uploadId)}
-                >
-                    <X className="size-4" strokeWidth={1.5} />
-                    <span className="sr-only">Cancel upload</span>
-                </Button>
+                        <span className="sr-only">Copy URL</span>
+                    </Button>
+
+                    <Button
+                        disabled={!["canceled", "error"].includes(upload.status)}
+                        size="icon-sm"
+                        onClick={() => retryUpload(uploadId)}
+                    >
+                        <RefreshCcw className="size-4" strokeWidth={1.5} />
+                        <span className="sr-only">Try again</span>
+                    </Button>
+
+                    <Button
+                        disabled={upload.status !== "progress"}
+                        size="icon-sm"
+                        onClick={() => cancelUpload(uploadId)}
+                    >
+                        <X className="size-4" strokeWidth={1.5} />
+                        <span className="sr-only">Cancel upload</span>
+                    </Button>
+                </div>
+                <div className="sm:hidden">
+                    <DropdownMenu.Root>
+                        <DropdownMenu.Trigger asChild>
+                            <Button size="icon-sm">
+                                <MoreVertical className="size-4" strokeWidth={1.5} />
+                                <span className="sr-only">More options</span>
+                            </Button>
+                        </DropdownMenu.Trigger>
+                        <DropdownMenu.Portal>
+                            <DropdownMenu.Content
+                                align="end"
+                                sideOffset={5}
+                                className="w-48 bg-zinc-800 text-white rounded-md shadow-lg border border-zinc-700"
+                            >
+                                <DropdownMenu.Item
+                                    disabled={upload.status !== "success"}
+                                    onSelect={handleDownload}
+                                    className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-300 data-highlighted:bg-zinc-700 data-disabled:opacity-50"
+                                >
+                                    <Download className="size-4" />
+                                    <span>Fazer download</span>
+                                </DropdownMenu.Item>
+                                <DropdownMenu.Item
+                                    disabled={!upload.remoteUrl}
+                                    onSelect={handleCopy}
+                                    className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-300 data-highlighted:bg-zinc-700 data-disabled:opacity-50"
+                                >
+                                    <Link2 className="size-4" />
+                                    <span>Copiar link</span>
+                                </DropdownMenu.Item>
+                                <DropdownMenu.Item
+                                    disabled={!["canceled", "error"].includes(upload.status)}
+                                    onSelect={() => retryUpload(uploadId)}
+                                    className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-300 data-highlighted:bg-zinc-700 data-disabled:opacity-50"
+                                >
+                                    <RefreshCcw className="size-4" />
+                                    <span>Tentar novamente</span>
+                                </DropdownMenu.Item>
+                                <DropdownMenu.Item
+                                    disabled={upload.status !== "progress"}
+                                    onSelect={() => cancelUpload(uploadId)}
+                                    className="flex items-center gap-2 px-3 py-2 text-sm text-red-400 data-highlighted:bg-zinc-700 data-disabled:opacity-50"
+                                >
+                                    <X className="size-4" />
+                                    <span>Cancelar</span>
+                                </DropdownMenu.Item>
+                            </DropdownMenu.Content>
+                        </DropdownMenu.Portal>
+                    </DropdownMenu.Root>
+                </div>
             </div>
         </motion.div>
     );

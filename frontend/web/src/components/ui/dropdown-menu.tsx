@@ -1,11 +1,10 @@
-import { ChevronDown } from 'lucide-react'
-import * as Select from '@radix-ui/react-select'
-
-export type Resolution = '4k' | '1080p' | '720p'
+import { ChevronDown } from 'lucide-react';
+import * as Select from '@radix-ui/react-select';
+import { type CompressionLevel } from '../../utils/compress-image';
 
 interface DropdownMenuProps {
-  onValueChange: (value: Resolution) => void
-  defaultValue: Resolution
+  onValueChange: (value: CompressionLevel) => void
+  defaultValue: CompressionLevel;
 }
 
 export function DropdownMenu({
@@ -30,24 +29,24 @@ export function DropdownMenu({
         >
           <Select.Viewport>
             <Select.Item
-              value="720p"
+              value="low"
               className="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none focus:bg-zinc-700"
             >
-              <Select.ItemText>720p</Select.ItemText>
+              <Select.ItemText>low</Select.ItemText>
             </Select.Item>
 
             <Select.Item
-              value="1080p"
+              value="medium"
               className="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none focus:bg-zinc-700"
             >
-              <Select.ItemText>1080p</Select.ItemText>
+              <Select.ItemText>medium</Select.ItemText>
             </Select.Item>
 
             <Select.Item
-              value="4k"
+              value="high"
               className="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none focus:bg-zinc-700"
             >
-              <Select.ItemText>4K</Select.ItemText>
+              <Select.ItemText>high</Select.ItemText>
             </Select.Item>
           </Select.Viewport>
         </Select.Content>
