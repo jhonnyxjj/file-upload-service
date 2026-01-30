@@ -1,73 +1,43 @@
-# React + TypeScript + Vite
+# Frontend - Serviço de Upload de Arquivos
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este é o frontend para o Serviço de Upload de Arquivos, construído com React, Vite e Tailwind CSS. Para instruções sobre como executar o projeto inteiro com Docker, por favor, veja o [`README.md` principal](../../README.md).
 
-Currently, two official plugins are available:
+## ✨ Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Arrastar e Soltar:** Arraste e solte arquivos facilmente na área de upload.
+- **Progresso em Tempo Real:** Feedback visual para o progresso de upload individual e geral.
+- **Compressão de Imagem:** Opções no lado do cliente para escolher o nível de compressão antes do upload.
+- **Uploads Concorrentes:** Lida com múltiplos uploads de arquivos ao mesmo tempo.
+- **Gerenciamento de Upload:** Cancele, tente novamente e copie links para seus uploads.
+- **Design Responsivo:** Uma interface limpa que funciona tanto em desktops quanto em dispositivos móveis.
 
-## React Compiler
+## 🛠️ Tecnologias Utilizadas
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Framework:** [React](https://react.dev/)
+- **Build Tool:** [Vite](https://vitejs.dev/)
+- **Linguagem:** [TypeScript](https://www.typescriptlang.org/)
+- **Estilização:** [Tailwind CSS](https://tailwindcss.com/)
+- **Gerenciamento de Estado:** [Zustand](https://zustand-demo.pmnd.rs/) para um gerenciamento de estado global simples e eficaz.
+- **Componentes de UI:** [Radix UI](https://www.radix-ui.com/) para componentes acessíveis e não estilizados.
+- **Ícones:** [Lucide React](https://lucide.dev/guide/packages/lucide-react)
 
-## Expanding the ESLint configuration
+## 🚀 Desenvolvimento Local
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+As instruções a seguir são para executar o serviço de frontend localmente.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1.  **Navegue até o diretório web:**
+    ```bash
+    cd frontend/web
+    ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+2.  **Instale as Dependências:**
+    ```bash
+    bun install
+    ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+3.  **Execute em Modo de Desenvolvimento:**
+    ```bash
+    bun run dev
+    ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+    O servidor de desenvolvimento será iniciado, e você pode acessar a aplicação em [http://localhost:5173](http://localhost:5173). Note que para a funcionalidade de upload funcionar, o serviço de backend também precisa estar em execução.
