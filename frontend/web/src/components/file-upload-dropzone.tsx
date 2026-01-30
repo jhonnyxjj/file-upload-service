@@ -6,8 +6,8 @@ import { DropdownMenu } from "./ui/dropdown-menu";
 
 export function FileUploadDropzone() {
     const addUploads = useUploadStore(store => store.addUploads);
-    const resolution = useUploadStore(store => store.resolution);
-    const setResolution = useUploadStore(store => store.setResolution);
+    const compressLevel = useUploadStore(store => store.compressionLevel);
+    const setCompressionLevel = useUploadStore(store => store.setCompressionLevel);
 
     const uploadCount = useUploadStore(store => store.uploads.size);
     const { hasPendingUploads, globalPercentage } = usePendingUploads();
@@ -56,12 +56,12 @@ export function FileUploadDropzone() {
             </div>
             <div className="flex items-center gap-2">
                 <span className="text-xxs sm:text-xs text-zinc-400">
-                    Resolution:
+                    Compression Level:
                 </span>
                 <DropdownMenu onValueChange={(value) => {
-                    console.log('Resolution selected:', value);
-                    setResolution(value);
-                }} defaultValue={resolution} />
+                    console.log('Compression level selected:', value);
+                    setCompressionLevel(value);
+                }} defaultValue={compressLevel} />
             </div>
 
 
