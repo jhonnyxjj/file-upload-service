@@ -1,7 +1,7 @@
 export function uploadRateLimit() {
     const rateLimitOptions = {
-        max: 15,
-        timeWindow: '10 minute'
+        max: 20,
+        timeWindow: '8 minute'
     };
     return rateLimitOptions;
 }
