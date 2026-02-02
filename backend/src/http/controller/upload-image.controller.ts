@@ -1,6 +1,8 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { UploadImageUseCase } from "../../usecase";
 import { makeUploadImageUseCase } from "../../factories/upload-image.factory";
+import { zodErrorToString } from "@/utils";
+import { ZodError } from "zod";
 
 const MAXIMUM_FILE_SIZE_IN_BYTES = 1024 * 1024 * 8; // 8MB
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];

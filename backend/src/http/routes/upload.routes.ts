@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { UploadImageController } from "../controller";
-import { makeUploadImageUseCase } from "../controller/di-container";
+import { makeUploadImageUseCase } from "../../factories/upload-image.factory";
 import { uploadRateLimit } from "../../utils/upload-rate-limit";
 
 export async function uploadImageRoute(app: FastifyInstance) {
