@@ -1,4 +1,4 @@
-import type { S3Client } from "@aws-sdk/client-s3";
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { sanitizeFileName } from "../../utils";
 import { Upload } from "@aws-sdk/lib-storage";
 import { type UploadStreamInput } from "../types";
@@ -13,8 +13,26 @@ export class R2StorageAdapter implements IStorageAdapter {
   constructor(
     private readonly s3: S3Client,
     private readonly bucketName: string,
-    private readonly publicUrl: string,
   ) { }
+
+  public async downloadStream(path: string): Promise<{ stream: NodeJS.ReadableStream; contentType: string }> {
+    const filePath = sanitizeFileName(path);
+    try {
+      const { Body, ContentType } = await this.s3.send(new GetObjectCommand({
+        Key: filePath,
+        Bucket: this.bucketName,
+      }));
+
+      if (!Body) {
+        throw new Error(`File not found: ${filePath}`);
+      }
+
+      return { stream: Body as NodeJS.ReadableStream, contentType: ContentType || 'application/octet-stream' };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Erro desconhecido";
+      throw new Error(`Falha ao baixar arquivo "${filePath}" do bucket "${this.bucketName}": ${message}`);
+    }
+  }
 
   public async uploadStream(input: UploadStreamInput): Promise<{ url: string }> {
     const filePath = sanitizeFileName(input.path);
@@ -30,9 +48,10 @@ export class R2StorageAdapter implements IStorageAdapter {
       });
 
       await uploadFile.done();
-      const publicUrl = new URL(filePath, this.publicUrl).toString();
+      
+      const url = filePath; 
 
-      return { url: publicUrl };
+      return { url: url };
     } catch (error) {
       const message = error instanceof Error ? error.message : "Erro desconhecido";
       throw new Error(`Falha ao enviar arquivo "${filePath}" para o bucket "${this.bucketName}": ${message}`);

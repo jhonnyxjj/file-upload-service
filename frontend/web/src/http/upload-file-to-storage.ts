@@ -33,8 +33,6 @@ export async function uploadFileToStorage({ file, signal, onProgress }: UploadPa
     if (!res.data.url) {
       throw new Error('No URL returned from upload');
     }
-
-    console.log('Upload response:', res);
     return { url: res.data.url };
   } catch (error) {
     console.error('Upload error:', error);
