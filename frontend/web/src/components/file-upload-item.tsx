@@ -29,7 +29,8 @@ export function FileUploadItem({ upload, uploadId, }: FileUploadItemProps) {
 
     async function handleCopy() {
         if (upload.remoteUrl) {
-            await navigator.clipboard.writeText(upload.remoteUrl);
+            const fullUrl = `${import.meta.env.VITE_API_BASE_URL}/${upload.remoteUrl}`;
+            await navigator.clipboard.writeText(fullUrl);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         }
@@ -38,7 +39,8 @@ export function FileUploadItem({ upload, uploadId, }: FileUploadItemProps) {
     // Cria um link temporário para forçar o download do arquivo no navegador.
     async function handleDownload() {
         if (upload.remoteUrl) {
-            const response = await fetch(upload.remoteUrl);
+            const fullUrl = `${import.meta.env.VITE_API_BASE_URL}/${upload.remoteUrl}`;
+            const response = await fetch(fullUrl);
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");

@@ -1,5 +1,6 @@
 import { UploadStreamInput } from "../types";
 
 export interface IStorageAdapter {
-  uploadStream({ path, contentType, stream }: UploadStreamInput): Promise<{ url: string }>;
+  uploadStream(input: UploadStreamInput): Promise<{ url: string }>;
+  downloadStream(path: string): Promise<{ stream: NodeJS.ReadableStream; contentType: string }>;
 }
