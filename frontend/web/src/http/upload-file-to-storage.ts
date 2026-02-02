@@ -16,7 +16,7 @@ export async function uploadFileToStorage({ file, signal, onProgress }: UploadPa
 
   try {
     const res = await axios.post<{ url: string }>(
-      "http://localhost:3000/uploads",
+      `${import.meta.env.VITE_API_BASE_URL}/uploads`,
       formData,
       {
         headers: {
