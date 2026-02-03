@@ -2,10 +2,10 @@
   "name": "upload-server",
   "type": "module",
   "scripts": {
-    "dev": "bun run --hot src/server.ts",
-    "build": "bun build ./src/server.ts --outdir ./dist --target node --minify",
-    "typecheck": "tsc --noEmit"
-  },
+  "dev": "bun run --hot src/server.ts",
+  "build": "bun build ./src/server.ts --outdir ./dist --target node --minify",
+  "start": "bun dist/server.js"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
