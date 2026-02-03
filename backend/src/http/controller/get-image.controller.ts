@@ -13,9 +13,12 @@ export class GetImageController {
       const { stream, contentType } = await this.useCase.execute({ path: filePath });
 
       reply.header('Content-Type', contentType);
+      console.log(`banana response ${stream}`); 
       return reply.send(stream);
+      
     } catch (error) {
       if (error instanceof Error && error.message.includes('File not found')) {
+        
         return reply.status(404).send({ message: 'File not found' });
       }
       console.error('Error serving file:', error);
