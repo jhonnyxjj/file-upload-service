@@ -1,5 +1,5 @@
 import { useUploadStore } from "./upload";
-import { uploadFileToStorage } from "../http/upload-file-to-storage";
+import { env, uploadFileToStorage } from "../http/upload-file-to-storage";
 import type { Upload } from "./create-upload";
 import { compressImage } from "../utils/compress-image";
 import { type CompressionLevel } from "../utils/compress-image";
@@ -27,9 +27,9 @@ export async function processUpload(uploadId: string, upload: Upload, compressio
             signal: upload.abortController.signal
         });
 
-        const urlWithCacheBust = `${url}?t=${new Date().getTime()}`;
+        const cleanUrl = url.replace(`${env.apiUrl}/`, "");
 
-        useUploadStore.getState().updateUpload(uploadId, { status: 'success', remoteUrl: urlWithCacheBust });
+        useUploadStore.getState().updateUpload(uploadId, { status: 'success', remoteUrl: cleanUrl });
         return url;
     } catch (error) {
         useUploadStore.getState().updateUpload(uploadId, { status: upload.abortController.signal.aborted ? 'canceled' : 'error' });

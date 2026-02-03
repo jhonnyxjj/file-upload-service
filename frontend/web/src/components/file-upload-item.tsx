@@ -26,32 +26,62 @@ export function FileUploadItem({ upload, uploadId, }: FileUploadItemProps) {
     const percentageSaved = Math.round(
         (1 - upload.file.size / upload.originalSizeInBytes) * 100
     );
+async function handleCopy() {
+    if (upload.remoteUrl) {
+        const baseUrl = import.meta.env.VITE_API_URL.replace(/\/$/, "");
+        
+        // Garante que a rota /images/ esteja presente
+        const path = upload.remoteUrl.startsWith('images/') 
+            ? upload.remoteUrl 
+            : `images/${upload.remoteUrl}`;
+            
+        const cleanPath = path.replace(/^\//, "");
+        const fullUrl = `${baseUrl}/${cleanPath}`;
 
-    async function handleCopy() {
-        if (upload.remoteUrl) {
-            const fullUrl = `${import.meta.env.VITE_API_BASE_URL}/${upload.remoteUrl}`;
-            await navigator.clipboard.writeText(fullUrl);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        }
+        await navigator.clipboard.writeText(fullUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
     }
+}
 
-    // Cria um link temporário para forçar o download do arquivo no navegador.
-    async function handleDownload() {
-        if (upload.remoteUrl) {
-            const fullUrl = `${import.meta.env.VITE_API_BASE_URL}/${upload.remoteUrl}`;
+   async function handleDownload() {
+    if (upload.remoteUrl) {
+        const baseUrl = import.meta.env.VITE_API_URL.replace(/\/$/, "");
+        
+        // Garante que a rota /images/ esteja presente
+        const path = upload.remoteUrl.startsWith('images/') 
+            ? upload.remoteUrl 
+            : `images/${upload.remoteUrl}`;
+            
+        const cleanPath = path.replace(/^\//, "");
+        const fullUrl = `${baseUrl}/${cleanPath}`;
+
+        console.log("Tentando baixar de:", fullUrl);
+        try {
             const response = await fetch(fullUrl);
+            if (!response.ok) throw new Error("Download failed");
+            
             const blob = await response.blob();
+            // Verifica se o que voltou é realmente uma imagem e não um JSON de erro
+            if (blob.type.includes("json")) {
+                console.error("O servidor retornou um erro em vez da imagem");
+                return;
+            }
+
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = upload.name;
+            a.download = upload.name; // Usa o nome original com .webp
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
             a.remove();
+        } catch (err) {
+            console.log(`Ocorreu um erro ao baixar o arquivo: ${err}`);
+            console.error("Erro ao baixar arquivo:", err);
         }
     }
+}
 
     return (
         <motion.div
