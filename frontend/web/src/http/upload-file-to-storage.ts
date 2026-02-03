@@ -10,13 +10,18 @@ type UploadResponse = {
   url: string ;
 };
 
+export const env = {
+  apiUrl: import.meta.env.VITE_API_URL,
+}
+
+
 export async function uploadFileToStorage({ file, signal, onProgress }: UploadParams): Promise<UploadResponse> {
   const formData = new FormData();
   formData.append('file', file);
 
   try {
     const res = await axios.post<{ url: string }>(
-      `${import.meta.env.VITE_API_BASE_URL}/uploads`,
+      `${env.apiUrl}/uploads`,
       formData,
       {
         headers: {

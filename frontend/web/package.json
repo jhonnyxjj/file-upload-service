@@ -4,12 +4,10 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "bun vite",
-    "build": "bun x tsc -b && bun vite build",
-    "lint": "bun x eslint .",
-    "preview": "bun vite preview",
-    "test": "bun vitest"
-  },
+  "dev": "bun vite --mode development",
+  "build": "bun x tsc -b && bun vite build --mode production",
+  "preview": "bun vite preview --mode production"
+},
   "dependencies": {
     "@radix-ui/react-collapsible": "^1.1.12",
     "@radix-ui/react-dropdown-menu": "^2.1.16",

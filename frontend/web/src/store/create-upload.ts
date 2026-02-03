@@ -1,3 +1,5 @@
+import { env } from '../http/upload-file-to-storage';
+
 type UploadStatus = 'progress' | 'success' | 'error' | 'canceled';
 
 export type Upload = {
@@ -18,7 +20,7 @@ export function createUpload(file: File): Upload {
         abortController: new AbortController(),
         originalSizeInBytes: file.size,
         uploadSizeInBytes: 0,
-        remoteUrl: undefined,
+        remoteUrl: env.apiUrl,
         compressedSizeInBytes: undefined, 
         
     };
