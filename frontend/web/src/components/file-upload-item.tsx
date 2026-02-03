@@ -28,15 +28,13 @@ export function FileUploadItem({ upload, uploadId, }: FileUploadItemProps) {
     );
 async function handleCopy() {
     if (upload.remoteUrl) {
+        // Remove barras do final da URL e do início do path para garantir que só terá UMA barra entre elas
         const baseUrl = import.meta.env.VITE_API_URL.replace(/\/$/, "");
-        
-        // Pega apenas o nome do arquivo, ignorando qualquer caminho que venha antes
         const fileName = upload.remoteUrl.split('/').pop(); 
         
-        // Força a rota correta do seu backend
-        const fullUrl = `${baseUrl}/images/${fileName}?t=${new Date().getTime()}`;
+        const fullUrl = `${baseUrl}/images/${fileName}`;
 
-        console.log("URL Final de Download:", fullUrl);
+        console.log("DEBUG: A URL que está sendo chamada é:", fullUrl);
 
         await navigator.clipboard.writeText(fullUrl);
         setCopied(true);
@@ -46,15 +44,13 @@ async function handleCopy() {
 
    async function handleDownload() {
     if (upload.remoteUrl) {
+        // Remove barras do final da URL e do início do path para garantir que só terá UMA barra entre elas
         const baseUrl = import.meta.env.VITE_API_URL.replace(/\/$/, "");
-        
-        // Pega apenas o nome do arquivo, ignorando qualquer caminho que venha antes
         const fileName = upload.remoteUrl.split('/').pop(); 
         
-        // Força a rota correta do seu backend
-        const fullUrl = `${baseUrl}/images/${fileName}?t=${new Date().getTime()}`;
+        const fullUrl = `${baseUrl}/images/${fileName}`;
 
-        console.log("URL Final de Download:", fullUrl);
+        console.log("DEBUG: A URL que está sendo chamada é:", fullUrl);
         try {
             const response = await fetch(fullUrl);
             if (!response.ok) throw new Error("Download failed");
