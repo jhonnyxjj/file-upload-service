@@ -30,13 +30,13 @@ async function handleCopy() {
     if (upload.remoteUrl) {
         const baseUrl = import.meta.env.VITE_API_URL.replace(/\/$/, "");
         
-        // Garante que a rota /images/ esteja presente
-        const path = upload.remoteUrl.startsWith('images/') 
-            ? upload.remoteUrl 
-            : `images/${upload.remoteUrl}`;
-            
-        const cleanPath = path.replace(/^\//, "");
-        const fullUrl = `${baseUrl}/${cleanPath}`;
+        // Pega apenas o nome do arquivo, ignorando qualquer caminho que venha antes
+        const fileName = upload.remoteUrl.split('/').pop(); 
+        
+        // Força a rota correta do seu backend
+        const fullUrl = `${baseUrl}/images/${fileName}?t=${new Date().getTime()}`;
+
+        console.log("URL Final de Download:", fullUrl);
 
         await navigator.clipboard.writeText(fullUrl);
         setCopied(true);
@@ -48,15 +48,13 @@ async function handleCopy() {
     if (upload.remoteUrl) {
         const baseUrl = import.meta.env.VITE_API_URL.replace(/\/$/, "");
         
-        // Garante que a rota /images/ esteja presente
-        const path = upload.remoteUrl.startsWith('images/') 
-            ? upload.remoteUrl 
-            : `images/${upload.remoteUrl}`;
-            
-        const cleanPath = path.replace(/^\//, "");
-        const fullUrl = `${baseUrl}/${cleanPath}`;
+        // Pega apenas o nome do arquivo, ignorando qualquer caminho que venha antes
+        const fileName = upload.remoteUrl.split('/').pop(); 
+        
+        // Força a rota correta do seu backend
+        const fullUrl = `${baseUrl}/images/${fileName}?t=${new Date().getTime()}`;
 
-        console.log("Tentando baixar de:", fullUrl);
+        console.log("URL Final de Download:", fullUrl);
         try {
             const response = await fetch(fullUrl);
             if (!response.ok) throw new Error("Download failed");
