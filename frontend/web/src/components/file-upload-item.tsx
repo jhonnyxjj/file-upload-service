@@ -7,6 +7,7 @@ import { useUploadStore } from "../store/upload";
 import { type Upload } from "../store/create-upload";
 import { formatBytes } from "../utils/format-bytes";
 import { useState } from "react";
+import { env } from "../http/upload-file-to-storage";
 
 interface FileUploadItemProps {
     upload: Upload;
@@ -29,7 +30,7 @@ export function FileUploadItem({ upload, uploadId, }: FileUploadItemProps) {
 async function handleCopy() {
     if (upload.remoteUrl) {
         // Remove barras do final da URL e do início do path para garantir que só terá UMA barra entre elas
-        const baseUrl = import.meta.env.VITE_API_URL.replace(/\/$/, "");
+        const baseUrl = env.apiUrl.replace(/\/$/, "");
         const fileName = upload.remoteUrl.split('/').pop(); 
         
         const fullUrl = `${baseUrl}/images/${fileName}`;
@@ -45,7 +46,7 @@ async function handleCopy() {
    async function handleDownload() {
     if (upload.remoteUrl) {
         // Remove barras do final da URL e do início do path para garantir que só terá UMA barra entre elas
-        const baseUrl = import.meta.env.VITE_API_URL.replace(/\/$/, "");
+        const baseUrl = env.apiUrl.replace(/\/$/, "");
         const fileName = upload.remoteUrl.split('/').pop(); 
         
         const fullUrl = `${baseUrl}/images/${fileName}`;
@@ -79,7 +80,7 @@ async function handleCopy() {
 
     return (
         <motion.div
-            className="p-3 sm:p-3 rounded-lg flex flex-col gap-3 sm:gap-3 shadow-shape-content bg-white/2 relative"
+            className="p-3 sm:p-4 rounded-lg flex flex-col gap-3 sm:gap-3 shadow-shape-content bg-white/2 relative"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
@@ -126,40 +127,51 @@ async function handleCopy() {
                 />
             </Progress.Root>
 
-            <div className="absolute top-2.5 right-2.5 flex items-center gap-1 z-10 shrink-0">
+            <div className="absolute top-2.5 right-2.5 flex items-center gap-1 z-20 shrink-0"> 
                 <div className="hidden sm:flex items-center gap-1">
                     <Button onClick={handleDownload} size="icon-sm" disabled={upload.status !== "success"}>
                         <Download className="size-4" strokeWidth={1.5} />
                         <span className="sr-only">download image</span>
                     </Button>
 
-                    <Button
-                        size="icon-sm"
-                        disabled={!upload.remoteUrl}
-                        onClick={handleCopy}
-                        className="relative"
-                    >
-                        {copied ? (
-                            <Check className="size-4 text-green-400" strokeWidth={2} />
-                        ) : (
-                            <Link2 className="size-4" strokeWidth={1.5} />
-                        )}
+                    <DropdownMenu.Root open={copied} onOpenChange={setCopied}>
+                        <DropdownMenu.Trigger asChild>
+                            <Button
+                                size="icon-sm"
+                                disabled={!upload.remoteUrl}
+                                onClick={handleCopy}
+                            >
+                                {copied ? (
+                                    <Check className="size-4 text-green-400" strokeWidth={2} />
+                                ) : (
+                                    <Link2 className="size-4" strokeWidth={1.5} />
+                                )}
+                                <span className="sr-only">Copy URL</span>
+                            </Button>
+                        </DropdownMenu.Trigger>
 
                         <AnimatePresence>
                             {copied && (
-                                <motion.span
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0 }}
-                                    className="absolute -top-8 right-0 bg-zinc-800 text-white text-xxs px-2 py-1 rounded shadow-lg border border-zinc-700 whitespace-nowrap"
-                                >
-                                    Copied!
-                                </motion.span>
+                                <DropdownMenu.Portal forceMount>
+                                    <DropdownMenu.Content
+                                        asChild
+                                        sideOffset={8}
+                                        align="center"
+                                        className="bg-transparent border-none shadow-none"
+                                    >
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, transition: { duration: 0.2 } }}
+                                            className="bg-zinc-900 text-white text-xxs font-medium px-2 py-1 rounded-md shadow-xl border border-zinc-700 whitespace-nowrap"
+                                        >
+                                            Copied!
+                                        </motion.div>
+                                    </DropdownMenu.Content>
+                                </DropdownMenu.Portal>
                             )}
                         </AnimatePresence>
-
-                        <span className="sr-only">Copy URL</span>
-                    </Button>
+                    </DropdownMenu.Root>
 
                     <Button
                         disabled={!["canceled", "error"].includes(upload.status)}
