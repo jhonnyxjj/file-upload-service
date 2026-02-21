@@ -1,6 +1,6 @@
 import { UploadImageUseCase } from "../usecase";
 import { UploadImageController } from "../http/controller/upload-image.controller";
-import { makeR2StorageAdapter } from "./create-r2-storage-adapter.factory";
+import { makeR2StorageAdapter } from "./create-r2-storage.factory";
 
 export function makeUploadImageUseCase() {
     const storage = makeR2StorageAdapter();

@@ -1,4 +1,4 @@
-import { env } from "../../../env";
+import { env } from "../../env";
 import { S3Client } from "@aws-sdk/client-s3";
 
 export function createR2Client() {
