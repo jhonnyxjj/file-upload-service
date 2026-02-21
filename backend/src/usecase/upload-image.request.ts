@@ -8,6 +8,6 @@ export const UploadImageSchema = z.object({
 });
 
 export type UploadImageOutputDTO = {
-  url: string;
+  path: string;
 };
 export type UploadImageInputDTO = z.input<typeof UploadImageSchema>;
