@@ -2,13 +2,15 @@
 FROM oven/bun:1.2.22 AS build
 WORKDIR /usr/src/app
 
-ARG VITE_API_URL
-ENV VITE_API_URL=$VITE_API_URL
-
 COPY frontend/web/package.json frontend/web/bun.lock* ./
 RUN bun install --frozen-lockfile
 
 COPY frontend/web/ .
+
+# Se não passar VITE_API_URL, usa o .env.production
+ARG VITE_API_URL
+ENV VITE_API_URL=${VITE_API_URL:-https://api.seusite.com}
+
 RUN bun run build
 
 # ===== RUNTIME =====

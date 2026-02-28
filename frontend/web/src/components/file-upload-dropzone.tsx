@@ -6,7 +6,7 @@ import { DropdownMenu } from "./ui/dropdown-menu";
 
 export function FileUploadDropzone() {
     const addUploads = useUploadStore(store => store.addUploads);
-    const compressLevel = useUploadStore(store => store.compressionLevel);
+    const compressionLevel = useUploadStore(store => store.compressionLevel);
     const setCompressionLevel = useUploadStore(store => store.setCompressionLevel);
 
     const uploadCount = useUploadStore(store => store.uploads.size);
@@ -14,7 +14,7 @@ export function FileUploadDropzone() {
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         multiple: true,
-        accept: {                   // TODO: Move file type verification to the backend and place it within the business logic.
+        accept: {
             "image/jpg": [],
             "image/jpeg": [],
             "image/png": [],
@@ -54,16 +54,16 @@ export function FileUploadDropzone() {
                     </>
                 )}
             </div>
+            
             <div className="flex items-center gap-2">
                 <span className="text-xxs sm:text-xs text-zinc-400">
-                    Compression Level:
+                    Compression:
                 </span>
-                <DropdownMenu onValueChange={(value) => {
-                    console.log('Compression level selected:', value);
-                    setCompressionLevel(value);
-                }} defaultValue={compressLevel} />
+                <DropdownMenu 
+                    onValueChange={(value) => setCompressionLevel(value as 'low' | 'medium' | 'high')} 
+                    defaultValue={compressionLevel} 
+                />
             </div>
-
 
             <span className="text-xxs sm:text-xs text-zinc-400">
                 Only PNG and JPG files are supported.
