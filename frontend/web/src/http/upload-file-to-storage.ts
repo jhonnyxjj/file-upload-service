@@ -30,7 +30,7 @@ export async function uploadFileToStorage({ file, signal, onProgress, compressio
       compressedSize: number;
       compressionRatio: string;
     }>(
-      `${env.apilocalUrl}/uploads`,
+      `${env.apiUrl}/uploads`,
       formData,
       {
         headers: {

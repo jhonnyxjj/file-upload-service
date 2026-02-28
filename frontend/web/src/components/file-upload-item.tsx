@@ -30,7 +30,7 @@ export function FileUploadItem({ upload, uploadId, }: FileUploadItemProps) {
 async function handleCopy() {
     if (upload.remoteUrl) {
         // Remove barras do final da URL e do início do path para garantir que só terá UMA barra entre elas
-        const baseUrl = env.apilocalUrl.replace(/\/$/, "");
+        const baseUrl = env.apiUrl.replace(/\/$/, "");
         const fileName = upload.remoteUrl.split('/').pop(); 
         
         const fullUrl = `${baseUrl}/images/${fileName}`;
@@ -46,7 +46,7 @@ async function handleCopy() {
    async function handleDownload() {
     if (upload.remoteUrl) {
         // Remove barras do final da URL e do início do path para garantir que só terá UMA barra entre elas
-        const baseUrl = env.apilocalUrl.replace(/\/$/, "");
+        const baseUrl = env.apiUrl.replace(/\/$/, "");
         const fileName = upload.remoteUrl.split('/').pop(); 
         
         const fullUrl = `${baseUrl}/images/${fileName}`;

@@ -19,7 +19,7 @@ export async function processUpload(uploadId: string, upload: Upload, compressio
             compressionLevel,
         });
 
-        const cleanUrl = response.url.replace(`${env.apilocalUrl}/`, "");
+        const cleanUrl = response.url.replace(`${env.apiUrl}/`, "");
 
         // Atualiza com os dados de compressão do backend
         useUploadStore.getState().updateUpload(uploadId, { 
