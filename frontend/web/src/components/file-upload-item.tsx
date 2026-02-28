@@ -23,14 +23,14 @@ export function FileUploadItem({ upload, uploadId, }: FileUploadItemProps) {
         ? Math.round((upload.uploadSizeInBytes * 100) / upload.file.size)
         : 0;
 
-    // Calcula a economia de espaço em porcentagem após a compressão da imagem.
-    const percentageSaved = Math.round(
-        (1 - upload.file.size / upload.originalSizeInBytes) * 100
-    );
+    // Calcula a economia de espaço em porcentagem após a compressão da imagem (dados do backend)
+    const percentageSaved = upload.compressedSizeInBytes 
+        ? Math.round((1 - upload.compressedSizeInBytes / upload.originalSizeInBytes) * 100)
+        : 0;
 async function handleCopy() {
     if (upload.remoteUrl) {
         // Remove barras do final da URL e do início do path para garantir que só terá UMA barra entre elas
-        const baseUrl = env.apiUrl.replace(/\/$/, "");
+        const baseUrl = env.apilocalUrl.replace(/\/$/, "");
         const fileName = upload.remoteUrl.split('/').pop(); 
         
         const fullUrl = `${baseUrl}/images/${fileName}`;
@@ -46,7 +46,7 @@ async function handleCopy() {
    async function handleDownload() {
     if (upload.remoteUrl) {
         // Remove barras do final da URL e do início do path para garantir que só terá UMA barra entre elas
-        const baseUrl = env.apiUrl.replace(/\/$/, "");
+        const baseUrl = env.apilocalUrl.replace(/\/$/, "");
         const fileName = upload.remoteUrl.split('/').pop(); 
         
         const fullUrl = `${baseUrl}/images/${fileName}`;
@@ -98,7 +98,7 @@ async function handleCopy() {
                             <span>{formatBytes(upload.originalSizeInBytes)}</span>
                             <div className="size-1 rounded-full bg-zinc-700" />
                             <span>
-                                {formatBytes(upload.file.size ?? 0)}
+                                {formatBytes(upload.compressedSizeInBytes ?? upload.file.size)}
                                 <span className="text-green-400 ml-1">{percentageSaved}% saved</span>
                             </span>
                             <div className="size-1 rounded-full bg-zinc-700" />

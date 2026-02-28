@@ -5,12 +5,13 @@ import { createUpload } from './create-upload';
 import { type Upload } from './create-upload';
 import { processUpload } from './process-upload';
 import { useShallow } from 'zustand/shallow';
-import { type CompressionLevel } from '../utils/compress-image';
+
+type CompressionLevel = 'low' | 'medium' | 'high';
 
 interface UploadStore {
   uploads: Map<string, Upload>;
   compressionLevel: CompressionLevel;
-  setCompressionLevel: (compressionLevel: CompressionLevel) => void;
+  setCompressionLevel: (level: CompressionLevel) => void;
   addUploads: (files: File[]) => void;
   cancelUpload: (uploadId: string) => void;
   updateUpload: (uploadId: string, update: Partial<Upload>) => void;
@@ -34,10 +35,8 @@ export const useUploadStore = create<UploadStore, [["zustand/immer", never]]>(
     return {
       uploads: new Map(),
       compressionLevel: 'medium',
-      setCompressionLevel: (compressionLevel: CompressionLevel) => {
-        set(state => {
-          state.compressionLevel = compressionLevel;
-        });
+      setCompressionLevel: (level: CompressionLevel) => {
+        set(state => { state.compressionLevel = level; });
       },
       addUploads(files: File[]) {
         const { compressionLevel } = get();
@@ -82,7 +81,6 @@ export const usePendingUploads = () => {
 
       const hasPendingUploads = pendingUploads.length > 0;
 
-      // Sempre calcula, retorna sempre o mesmo formato
       const { totalBytes, uploadedBytes } = pendingUploads.reduce(
         (acc, upload) => {
           acc.uploadedBytes += upload.uploadSizeInBytes;
@@ -98,7 +96,6 @@ export const usePendingUploads = () => {
       return {
         hasPendingUploads,
         globalPercentage,
-
       };
     })
   );

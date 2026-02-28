@@ -7,20 +7,30 @@ export interface UploadParams {
   file: File;
   signal?: AbortSignal;
   onProgress?: (sizeInBytes: number) => void;
+  compressionLevel?: 'low' | 'medium' | 'high';
 }
 
 
 type UploadResponse = {
   url: string;
+  originalSize: number;
+  compressedSize: number;
+  compressionRatio: string;
 };
 
-export async function uploadFileToStorage({ file, signal, onProgress }: UploadParams): Promise<UploadResponse> {
+export async function uploadFileToStorage({ file, signal, onProgress, compressionLevel = 'medium' }: UploadParams): Promise<UploadResponse> {
   const formData = new FormData();
   formData.append('file', file);
+  formData.append('compressionLevel', compressionLevel);
 
   try {
-    const res = await axios.post<{ url: string }>(
-      `${env.apiUrl}/uploads`,
+    const res = await axios.post<{
+      url: string;
+      originalSize: number;
+      compressedSize: number;
+      compressionRatio: string;
+    }>(
+      `${env.apilocalUrl}/uploads`,
       formData,
       {
         headers: {
@@ -43,7 +53,12 @@ export async function uploadFileToStorage({ file, signal, onProgress }: UploadPa
       throw new Error('No URL returned from upload');
     }
 
-    return { url: res.data.url };
+    return {
+      url: res.data.url,
+      originalSize: res.data.originalSize,
+      compressedSize: res.data.compressedSize,
+      compressionRatio: res.data.compressionRatio,
+    };
   } catch (error) {
     console.error(`Error uploading file: ${error}`);
     throw new Error('Failed to upload file to storage');

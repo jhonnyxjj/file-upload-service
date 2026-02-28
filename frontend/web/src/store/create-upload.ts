@@ -20,7 +20,7 @@ export function createUpload(file: File): Upload {
         abortController: new AbortController(),
         originalSizeInBytes: file.size,
         uploadSizeInBytes: 0,
-        remoteUrl: env.apiUrl,
+        remoteUrl: env.apilocalUrl,
         compressedSizeInBytes: undefined, 
         
     };
