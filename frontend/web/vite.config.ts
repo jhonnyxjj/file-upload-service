@@ -15,5 +15,12 @@ export default defineConfig({
       usePolling: true,
     },
     host: true,
+    proxy: {
+      '/api': {
+        target: 'https://file-upload-api-1bvr.onrender.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      }
+    }
   },
 })

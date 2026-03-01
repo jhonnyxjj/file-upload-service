@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { envSchema } from './env.schema';
 
 const parsedEnv = envSchema.safeParse(import.meta.env);
-const VITE_API_LOCAL_URL = 'http://localhost:3000';
+
 
 if (!parsedEnv.success) {
   console.error(
@@ -14,5 +14,4 @@ if (!parsedEnv.success) {
 
 export const env = {
   apiUrl: parsedEnv.data.VITE_API_URL,
-  apilocalUrl: VITE_API_LOCAL_URL,
 }
