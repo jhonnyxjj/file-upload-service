@@ -1,9 +1,9 @@
 import { GetImageInputDTO, GetImageOutputDTO, GetImageInputSchema } from "./get-image.request";
-import { IStorageAdapter } from "../storage/contracts";
+import { IStorageR2 } from "../infra/r2/contracts";
 import { validateRequestInput } from "@/utils";
 
 export class GetImageUseCase {
-  constructor(private readonly storage: IStorageAdapter) {}
+  constructor(private readonly storage: IStorageR2) {}
 
   async execute(input: GetImageInputDTO): Promise<GetImageOutputDTO> {
     const validatedInput = validateRequestInput(

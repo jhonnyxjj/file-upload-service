@@ -1,0 +1,1 @@
+export type { IStorageR2} from'./i-storage';
