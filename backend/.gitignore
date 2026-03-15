@@ -2,7 +2,8 @@
 node_modules/
 node_modules.env
 docs/
-
+dist
+dist-ssr
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
