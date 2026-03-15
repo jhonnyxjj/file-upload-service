@@ -9,7 +9,6 @@ export async function processUpload(uploadId: string, upload: Upload, compressio
     }
 
     try {
-        // Envia o arquivo original - o backend comprime
         const response = await uploadFileToStorage({
             file: upload.file,
             onProgress(sizeInBytes: number) {
@@ -21,11 +20,9 @@ export async function processUpload(uploadId: string, upload: Upload, compressio
 
         const cleanUrl = response.url.replace(`${env.apiUrl}/`, "");
 
-        // Atualiza com os dados de compressão do backend
         useUploadStore.getState().updateUpload(uploadId, { 
             status: 'success', 
             remoteUrl: cleanUrl,
-            // O backend retorna os tamanhos reais após compressão
             compressedSizeInBytes: response.compressedSize,
         });
         return response.url;
