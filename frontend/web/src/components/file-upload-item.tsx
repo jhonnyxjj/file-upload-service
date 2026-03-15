@@ -48,14 +48,11 @@ async function handleCopy() {
     if (upload.remoteUrl) {
         let fullUrl = upload.remoteUrl;
 
-        if (upload.remoteUrl.startsWith('http')) {
-            window.open(fullUrl, '_blank');
-            return;
+        if (!upload.remoteUrl.startsWith('http')) {
+            const baseUrl = env.apiUrl.replace(/\/$/, "");
+            const fileName = upload.remoteUrl.split('/').pop(); 
+            fullUrl = `${baseUrl}/images/${fileName}`;
         }
-
-        const baseUrl = env.apiUrl.replace(/\/$/, "");
-        const fileName = upload.remoteUrl.split('/').pop(); 
-        fullUrl = `${baseUrl}/images/${fileName}`;
 
         console.log("DEBUG: A URL que está sendo chamada é:", fullUrl);
         try {
