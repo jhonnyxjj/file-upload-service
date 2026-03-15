@@ -2,7 +2,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as Progress from "@radix-ui/react-progress";
 import { Download, ImageUp, Link2, RefreshCcw, X, Check, MoreVertical } from "lucide-react";
 import { Button } from "./ui/buttons";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import { useUploadStore } from "../store/upload";
 import { type Upload } from "../store/create-upload";
 import { formatBytes } from "../utils/format-bytes";
@@ -14,7 +14,8 @@ interface FileUploadItemProps {
     uploadId: string;
 }
 
-export function FileUploadItem({ upload, uploadId, }: FileUploadItemProps) {
+export function FileUploadItem({ upload, uploadId, }: FileUploadItemProps) {   
+    
     const [copied, setCopied] = useState(false);
     const cancelUpload = useUploadStore((store) => store.cancelUpload);
     const retryUpload = useUploadStore((store) => store.retryUpload);
@@ -29,13 +30,13 @@ export function FileUploadItem({ upload, uploadId, }: FileUploadItemProps) {
         : 0;
 async function handleCopy() {
     if (upload.remoteUrl) {
-        // Remove barras do final da URL e do início do path para garantir que só terá UMA barra entre elas
-        const baseUrl = env.apiUrl.replace(/\/$/, "");
-        const fileName = upload.remoteUrl.split('/').pop(); 
-        
-        const fullUrl = `${baseUrl}/images/${fileName}`;
+        let fullUrl = upload.remoteUrl;
 
-        console.log("DEBUG: A URL que está sendo chamada é:", fullUrl);
+        if (!upload.remoteUrl.startsWith('http')) {
+            const baseUrl = env.apiUrl.replace(/\/$/, "");
+            const fileName = upload.remoteUrl.split('/').pop(); 
+            fullUrl = `${baseUrl}/images/${fileName}`;
+        }
 
         await navigator.clipboard.writeText(fullUrl);
         setCopied(true);
@@ -45,11 +46,13 @@ async function handleCopy() {
 
    async function handleDownload() {
     if (upload.remoteUrl) {
-        // Remove barras do final da URL e do início do path para garantir que só terá UMA barra entre elas
-        const baseUrl = env.apiUrl.replace(/\/$/, "");
-        const fileName = upload.remoteUrl.split('/').pop(); 
-        
-        const fullUrl = `${baseUrl}/images/${fileName}`;
+        let fullUrl = upload.remoteUrl;
+
+        if (!upload.remoteUrl.startsWith('http')) {
+            const baseUrl = env.apiUrl.replace(/\/$/, "");
+            const fileName = upload.remoteUrl.split('/').pop(); 
+            fullUrl = `${baseUrl}/images/${fileName}`;
+        }
 
         console.log("DEBUG: A URL que está sendo chamada é:", fullUrl);
         try {
@@ -134,44 +137,34 @@ async function handleCopy() {
                         <span className="sr-only">download image</span>
                     </Button>
 
-                    <DropdownMenu.Root open={copied} onOpenChange={setCopied}>
-                        <DropdownMenu.Trigger asChild>
-                            <Button
-                                size="icon-sm"
-                                disabled={!upload.remoteUrl}
-                                onClick={handleCopy}
-                            >
-                                {copied ? (
-                                    <Check className="size-4 text-green-400" strokeWidth={2} />
-                                ) : (
-                                    <Link2 className="size-4" strokeWidth={1.5} />
-                                )}
-                                <span className="sr-only">Copy URL</span>
-                            </Button>
-                        </DropdownMenu.Trigger>
-
-                        <AnimatePresence>
-                            {copied && (
-                                <DropdownMenu.Portal forceMount>
-                                    <DropdownMenu.Content
-                                        asChild
-                                        sideOffset={8}
-                                        align="center"
-                                        className="bg-transparent border-none shadow-none"
-                                    >
-                                        <motion.div
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, transition: { duration: 0.2 } }}
-                                            className="bg-zinc-900 text-white text-xxs font-medium px-2 py-1 rounded-md shadow-xl border border-zinc-700 whitespace-nowrap"
-                                        >
-                                            Copied!
-                                        </motion.div>
-                                    </DropdownMenu.Content>
-                                </DropdownMenu.Portal>
+                    <div className="relative">
+                        <Button
+                            size="icon-sm"
+                            disabled={!upload.remoteUrl}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleCopy();
+                            }}
+                        >
+                            {copied ? (
+                                <Check className="size-4 text-green-400" strokeWidth={2} />
+                            ) : (
+                                <Link2 className="size-4" strokeWidth={1.5} />
                             )}
-                        </AnimatePresence>
-                    </DropdownMenu.Root>
+                            <span className="sr-only">Copy URL</span>
+                        </Button>
+
+                        {copied && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, transition: { duration: 0.2 } }}
+                                className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-zinc-900 text-white text-xxs font-medium px-2 py-1 rounded-md shadow-xl border border-zinc-700 whitespace-nowrap z-50"
+                            >
+                                Copied!
+                            </motion.div>
+                        )}
+                    </div>
 
                     <Button
                         disabled={!["canceled", "error"].includes(upload.status)}
